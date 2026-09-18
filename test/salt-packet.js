@@ -8,6 +8,8 @@ const css = read('css/salt.css');
 const js = read('js/salt.js');
 ok('packet css', /salt-pkt/.test(css) && /salt-pop/.test(css));
 ok('paper sachet not a Link card', /salt-crimp/.test(css) && /#f6efe2/.test(css) && /salt-pkt--knock/.test(css));
+ok('realistic packet parts', /salt-flap/.test(css) && /salt-grain/.test(css) && /salt-crease/.test(css) && /salt-stamp/.test(css));
+ok('serrated svg seal', /<svg class="salt-crimp"/.test(js) && /L5 1\.5/.test(js));
 ok('yes is on the packet', /class="salt-yes">Yes/.test(js) && /\.salt-yes/.test(css));
 ok('no giant extruded word', !/font-size:\s*42px/.test(css) && !/salt-blue/.test(css));
 ok('phone knock opens the packet', /salt-pkt--knock/.test(js) && /salt-knock/.test(js));
