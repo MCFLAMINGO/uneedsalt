@@ -7,11 +7,11 @@ function ok(name, cond) { if (!cond) throw new Error('FAIL ' + name); console.lo
 const css = read('css/salt.css');
 const js = read('js/salt.js');
 ok('packet css', /salt-pkt/.test(css) && /salt-pop/.test(css));
-ok('paper sachet not a Link card', /salt-crimp/.test(css) && /#f6efe2/.test(css) && /salt-pkt--knock/.test(css));
-ok('realistic packet parts', /salt-flap/.test(css) && /salt-grain/.test(css) && /salt-crease/.test(css) && /salt-stamp/.test(css));
-ok('serrated svg seal', /<svg class="salt-crimp"/.test(js) && /L5 1\.5/.test(js));
+ok('white diner sachet', /salt-end/.test(css) && /#2c4a8c/.test(css) && /Georgia/.test(css) && /salt-pkt--knock/.test(css));
+ok('crimped ends and rule', /salt-end--l/.test(css) && /salt-end--r/.test(css) && /salt-rule/.test(css) && /salt-grain/.test(css));
+ok('markup is the diner packet', /salt-end--l/.test(js) && /class="salt-word">Salt/.test(js) && /salt-rule/.test(js));
 ok('yes is on the packet', /class="salt-yes">Yes/.test(js) && /\.salt-yes/.test(css));
-ok('no giant extruded word', !/font-size:\s*42px/.test(css) && !/salt-blue/.test(css));
+ok('no giant extruded word', !/font-size:\s*42px/.test(css) && !/\.salt-blue/.test(css));
 ok('phone knock opens the packet', /salt-pkt--knock/.test(js) && /salt-knock/.test(js));
 ok('helper pops a packet not a page', /function pop\(/.test(js) && /salt-float/.test(js));
 ok('page has a stage not a modal', /salt-stage/.test(read('index.html')) && !/modal/i.test(read('index.html')));

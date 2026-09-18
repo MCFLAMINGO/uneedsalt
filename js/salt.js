@@ -111,15 +111,11 @@
     pkt.setAttribute('data-salt', c && c.id ? c.id : '');
     pkt.innerHTML =
       '<div class="salt-sheet">' +
-      '<div class="salt-flap" aria-hidden="true"></div>' +
-      '<svg class="salt-crimp" viewBox="0 0 120 10" preserveAspectRatio="none" aria-hidden="true">' +
-      '<path d="M0 10 L5 1.5 L10 10 L15 1.5 L20 10 L25 1.5 L30 10 L35 1.5 L40 10 L45 1.5 L50 10 L55 1.5 L60 10 L65 1.5 L70 10 L75 1.5 L80 10 L85 1.5 L90 10 L95 1.5 L100 10 L105 1.5 L110 10 L115 1.5 L120 10 Z"></path>' +
-      '</svg>' +
+      '<i class="salt-end salt-end--l" aria-hidden="true"></i>' +
+      '<i class="salt-end salt-end--r" aria-hidden="true"></i>' +
       '<div class="salt-grain" aria-hidden="true"></div>' +
-      '<i class="salt-crease salt-crease--l" aria-hidden="true"></i>' +
-      '<i class="salt-crease salt-crease--r" aria-hidden="true"></i>' +
       '<button type="button" class="salt-face" aria-expanded="false" aria-label="Salt — open">' +
-      '<span class="salt-stamp"><span class="salt-word">Salt</span></span></button>' +
+      '<span class="salt-word">Salt</span><span class="salt-rule" aria-hidden="true"></span></button>' +
       '<div class="salt-in">' +
       '<div class="salt-who"></div><div class="salt-act"></div><div class="salt-to"></div>' +
       '<div class="salt-row">' +
