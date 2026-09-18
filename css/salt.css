@@ -68,60 +68,86 @@ body.salt-body.salt-knock { background: #ecece8; }
 }
 .salt-row-home { display: flex; gap: 8px; flex-wrap: wrap; }
 
-/* The control — same family as Link, not a 3D packet. */
+/* The render — a paper salt packet that pops. Not a Link card. */
 .salt-pkt {
   position: relative;
-  width: max-content;
-  max-width: 280px;
+  width: 118px;
   background: none;
-  filter: none;
-  transform: none;
-  animation: salt-pop 200ms ease-out both;
+  animation: salt-pop 420ms cubic-bezier(.18,.9,.28,1.08) both;
   user-select: none;
+  transform-origin: 50% 110%;
 }
 .salt-pkt.is-open { width: 260px; }
 .salt-pkt--still { animation: none; }
+.salt-pkt--knock { width: 112px; }
+.salt-pkt--knock.is-open { width: min(300px, 92vw); }
 @keyframes salt-pop {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(36px) scale(0.7) rotate(-6deg); }
   to { opacity: 1; transform: none; }
 }
 .salt-sheet {
-  background: #fff;
-  border: 1px solid var(--salt-line);
-  border-radius: 16px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03), 0 10px 28px rgba(0, 0, 0, 0.08);
+  position: relative;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.55), transparent 38%),
+    linear-gradient(180deg, #f6efe2 0%, #efe4d0 55%, #e7d8be 100%);
+  border: 1px solid rgba(90, 70, 40, 0.18);
+  border-radius: 7px 7px 14px 14px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.65) inset,
+    0 10px 22px rgba(70, 50, 20, 0.16),
+    0 2px 4px rgba(70, 50, 20, 0.08);
   color: var(--salt-ink);
   overflow: hidden;
+  min-height: 168px;
 }
-.salt-crimp { display: none; }
+.salt-pkt.is-open .salt-sheet { min-height: 0; }
+.salt-crimp {
+  display: block;
+  height: 16px;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #d9c9a8 0 7px,
+      #cbb892 7px 10px,
+      #e6d7b8 10px 14px
+    );
+  border-bottom: 1px solid rgba(90, 70, 40, 0.16);
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset;
+}
 .salt-face {
   display: block;
   width: 100%;
-  padding: 12px 18px;
+  min-height: 152px;
+  padding: 28px 12px 20px;
   border: 0;
   background: transparent;
   cursor: pointer;
-  text-align: left;
+  text-align: center;
   color: inherit;
   font: inherit;
 }
+.salt-pkt.is-open .salt-face {
+  min-height: 0;
+  padding: 10px 14px 0;
+}
 .salt-word {
   display: block;
-  font: 650 1.05rem/1 system-ui, -apple-system, sans-serif;
-  letter-spacing: -0.03em;
-  color: var(--salt-ink);
+  font: 750 1.35rem/1 system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #3b2f1e;
 }
 .salt-pkt.is-open .salt-word {
-  font-size: 0.78rem;
-  letter-spacing: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
   color: var(--salt-mute);
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 .salt-rule { display: none; }
 .salt-hint { display: none; }
 .salt-in {
   display: none;
-  padding: 0 16px 16px;
+  padding: 4px 16px 16px;
   color: var(--salt-ink);
   text-align: left;
 }
@@ -151,7 +177,7 @@ body.salt-body.salt-knock { background: #ecece8; }
   background: var(--salt-yes);
   color: #fff;
   border-radius: 12px;
-  min-height: 44px;
+  min-height: 48px;
 }
 .salt-no {
   background: transparent;
@@ -170,6 +196,14 @@ body.salt-body.salt-knock { background: #ecece8; }
   pointer-events: none;
 }
 .salt-float .salt-pkt { pointer-events: auto; }
+@media (max-width: 640px) {
+  .salt-float {
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+  }
+}
 .salt-stage {
   min-height: 100dvh;
   display: grid;
@@ -177,6 +211,10 @@ body.salt-body.salt-knock { background: #ecece8; }
   padding: 24px 12px;
 }
 .salt-stage[hidden] { display: none; }
+body.salt-knock {
+  background:
+    radial-gradient(ellipse at 50% 40%, #f3eee4, #e5ddd0 70%);
+}
 
 .salt-host .salt-buy { margin: 0 0 16px; }
 .salt-field {

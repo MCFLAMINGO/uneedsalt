@@ -26,7 +26,11 @@
     try { if (w.SALT_ASSETS) return String(w.SALT_ASSETS).replace(/\/$/, ''); } catch (e) { /* ignore */ }
     try {
       var h = w.location && w.location.hostname;
-      if (h === 'localhost' || h === '127.0.0.1') return 'http://127.0.0.1:3000';
+      if (h === 'localhost' || h === '127.0.0.1') {
+        var p = w.location && w.location.port;
+        if (p && p !== '3000' && p !== '3010') return String(w.location.origin).replace(/\/$/, '');
+        return 'http://127.0.0.1:3000';
+      }
     } catch (e) { /* ignore */ }
     return 'https://uneedsalt.com';
   }
@@ -155,8 +159,17 @@
     }
     host.innerHTML = '';
     var pkt = packetEl(c);
+    var knock = !!(o.knock || (host && host.id === 'salt-stage') || (doc.body && doc.body.classList.contains('salt-knock')));
+    if (knock) pkt.classList.add('salt-pkt--knock');
     host.appendChild(pkt);
     if (c && c.id) bindDecide(pkt, c.id);
+    if (knock && c && c.status === 'pending') {
+      setTimeout(function () {
+        pkt.classList.add('is-open');
+        var face = pkt.querySelector('.salt-face');
+        if (face) face.setAttribute('aria-expanded', 'true');
+      }, 280);
+    }
     if (c && (c.status === 'yes' || c.status === 'no' || c.status === 'expired')) {
       finish(pkt, c.status === 'yes',
         c.status === 'yes' ? 'Yes — they can go.' :

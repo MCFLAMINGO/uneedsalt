@@ -7,10 +7,10 @@ function ok(name, cond) { if (!cond) throw new Error('FAIL ' + name); console.lo
 const css = read('css/salt.css');
 const js = read('js/salt.js');
 ok('packet css', /salt-pkt/.test(css) && /salt-pop/.test(css));
-ok('sheet not a render', /salt-sheet/.test(css) && /border-radius:\s*16px/.test(css));
-ok('yes is a Link tap', /class="salt-yes">Yes/.test(js) && /\.salt-yes/.test(css));
+ok('paper sachet not a Link card', /salt-crimp/.test(css) && /#f6efe2/.test(css) && /salt-pkt--knock/.test(css));
+ok('yes is on the packet', /class="salt-yes">Yes/.test(js) && /\.salt-yes/.test(css));
 ok('no giant extruded word', !/font-size:\s*42px/.test(css) && !/salt-blue/.test(css));
-ok('no zigzag sachet clip', !/clip-path/.test(css));
+ok('phone knock opens the packet', /salt-pkt--knock/.test(js) && /salt-knock/.test(js));
 ok('helper pops a packet not a page', /function pop\(/.test(js) && /salt-float/.test(js));
 ok('page has a stage not a modal', /salt-stage/.test(read('index.html')) && !/modal/i.test(read('index.html')));
 ok('hidden stage does not eat the fold', /\.salt-stage\[hidden\]\s*\{\s*display:\s*none/.test(css));
