@@ -23,8 +23,9 @@
   </div>
   <p class="salt-kicker">Salt</p>
   <h1>Human receipts for&nbsp;agents.</h1>
-  <p class="lede">Works like Link, for a yes. Any website. Any agent. Fail closed until they tap. No email code. Not a wallet.</p>
+  <p class="lede">Works like Link, for a yes. Any website. Any agent. Fail closed until they tap. The human never pays. Hosts buy live yeses.</p>
   <pre class="salt-snip">&lt;script src="https://uneedsalt.com/js/salt.js"&gt;&lt;/script&gt;
+&lt;script&gt;window.SALT_KEY = 'sk_live_…'&lt;/script&gt;
 
 const rec = await Salt.yes({
   who: 'your-app',
@@ -32,9 +33,12 @@ const rec = await Salt.yes({
   to: 'vendor',
   amount: '12'
 })
-if (!rec) throw new Error('no')</pre>
-  <button type="button" class="salt-link" id="demo">Try one</button>
-  <p class="lede" style="margin-top:22px">Agents: <a href="/salt.txt">salt.txt</a> · <a href="/.well-known/human-receipt">/.well-known/human-receipt</a> · MCP <span class="mono">POST /api/salt/mcp</span></p>
+if (!rec || !rec.live) throw new Error('no')</pre>
+  <p class="salt-row-home">
+    <button type="button" class="salt-link" id="demo">Try one</button>
+    <a class="salt-link salt-link--ghost" href="/host">Get a key</a>
+  </p>
+  <p class="lede" style="margin-top:22px">Agents: <a href="/salt.txt">salt.txt</a> · <a href="/llms.txt">llms.txt</a> · <a href="/.well-known/human-receipt">/.well-known/human-receipt</a> · MCP <span class="mono">POST /api/salt/mcp</span></p>
 </div>
 <script src="/js/salt.js"></script>
 <script src="/js/saltPage.js"></script>

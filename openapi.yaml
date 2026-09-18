@@ -1,0 +1,66 @@
+openapi: 3.1.0
+info:
+  title: Salt
+  version: "1.1.0"
+  description: Human receipts for agents. Fail closed until a live yes. Human never pays. Buy a host key at https://uneedsalt.com/host.
+  contact:
+    url: https://uneedsalt.com
+servers:
+  - url: https://uneedsalt.com
+paths:
+  /api/salt/challenge:
+    post:
+      operationId: saltChallenge
+      summary: Create a Salt challenge
+      security:
+        - hostKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                who: { type: string }
+                action: { type: string }
+                to: { type: string }
+                amount: { type: string }
+                unit: { type: string }
+      responses:
+        "201":
+          description: Pending challenge with tap URL
+  /api/salt/challenge/{id}:
+    get:
+      operationId: saltPoll
+      summary: Poll a challenge
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Challenge status
+  /api/salt/verify:
+    post:
+      operationId: saltVerify
+      summary: Verify a receipt. Require live true before acting.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                receipt: { type: object }
+      responses:
+        "200":
+          description: Live receipt
+        "403":
+          description: Not a Salt receipt
+components:
+  securitySchemes:
+    hostKey:
+      type: http
+      scheme: bearer
+      description: Host key from https://uneedsalt.com/host

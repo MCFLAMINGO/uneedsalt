@@ -27,8 +27,19 @@
     return 'https://uneedsalt.com';
   }
 
-  function j(method, path, body) {
+  function hostKey(spec) {
+    try {
+      if (spec && spec.key) return String(spec.key);
+      if (w.SALT_KEY) return String(w.SALT_KEY);
+      if (w.Salt && w.Salt.key) return String(w.Salt.key);
+    } catch (e) { /* ignore */ }
+    return '';
+  }
+
+  function j(method, path, body, spec) {
     var opt = { method: method, headers: { Accept: 'application/json' }, mode: 'cors' };
+    var k = hostKey(spec);
+    if (k) opt.headers.Authorization = 'Bearer ' + k;
     if (body) {
       opt.headers['Content-Type'] = 'application/json';
       opt.body = JSON.stringify(body);
@@ -43,7 +54,7 @@
 
   function sleep(ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); }
   function wellKnown() { return j('GET', '/api/salt'); }
-  function challenge(spec) { return j('POST', '/api/salt/challenge', spec || {}); }
+  function challenge(spec) { return j('POST', '/api/salt/challenge', spec || {}, spec); }
   function poll(id) { return j('GET', '/api/salt/challenge/' + encodeURIComponent(id)); }
   function yesTap(id) { return j('POST', '/api/salt/challenge/' + encodeURIComponent(id) + '/yes'); }
   function noTap(id) { return j('POST', '/api/salt/challenge/' + encodeURIComponent(id) + '/no'); }

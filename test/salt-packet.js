@@ -16,5 +16,6 @@ ok('page has a stage not a modal', /salt-stage/.test(read('index.html')) && !/mo
 ok('hidden stage does not eat the fold', /\.salt-stage\[hidden\]\s*\{\s*display:\s*none/.test(css));
 ok('click face to open', /aria-label="Salt — open"/.test(js) && /salt-face/.test(js));
 ok('yes() pops the packet', /pop\(ch/.test(js));
+ok('host page is a till not a desk', /Buy live yeses/.test(read('host.html')) && /human never pays/i.test(read('host.html')));
 
 console.log('salt-packet: all ok');

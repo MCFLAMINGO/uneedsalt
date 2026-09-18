@@ -1,0 +1,15 @@
+{
+  "name": "salt",
+  "displayName": "Salt",
+  "description": "Human receipts for agents. Fail closed until a person taps yes. Host prepaid; human never pays.",
+  "homepage": "https://uneedsalt.com",
+  "docs": "https://uneedsalt.com/salt.txt",
+  "transport": "http",
+  "url": "https://uneedsalt.com/api/salt/mcp",
+  "tools": ["salt_challenge", "salt_poll", "salt_verify"],
+  "auth": {
+    "type": "bearer",
+    "header": "Authorization",
+    "buy": "https://uneedsalt.com/host"
+  }
+}

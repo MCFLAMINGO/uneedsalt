@@ -57,6 +57,16 @@ body.salt-body.salt-knock { background: #ecece8; }
   cursor: pointer;
 }
 .salt-link:disabled { opacity: .5; }
+.salt-link--ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: var(--salt-ink);
+  border: 1px solid var(--salt-line);
+  text-decoration: none;
+}
+.salt-row-home { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* The control — same family as Link, not a 3D packet. */
 .salt-pkt {
@@ -167,3 +177,39 @@ body.salt-body.salt-knock { background: #ecece8; }
   padding: 24px 12px;
 }
 .salt-stage[hidden] { display: none; }
+
+.salt-host .salt-buy { margin: 0 0 16px; }
+.salt-field {
+  display: block;
+  margin: 0 0 14px;
+  font: 650 0.72rem/1.4 system-ui, sans-serif;
+  color: var(--salt-mute);
+}
+.salt-field input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  box-sizing: border-box;
+  border: 1px solid var(--salt-line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 12px 14px;
+  font: 500 0.95rem system-ui, sans-serif;
+  color: var(--salt-ink);
+}
+.salt-packs { display: flex; flex-direction: column; gap: 8px; }
+.salt-pack {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--salt-line);
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  cursor: pointer;
+  color: inherit;
+}
+.salt-pack strong { display: block; font: 650 1rem system-ui, sans-serif; }
+.salt-pack span { display: block; margin-top: 2px; color: var(--salt-mute); font-size: 0.85rem; }
+.salt-note { color: var(--salt-mute); font-size: 0.85rem; min-height: 1.3em; }
+.salt-paid { margin: 8px 0 18px; }

@@ -1,0 +1,29 @@
+# Salt
+
+> Human receipts for agents. Origin https://uneedsalt.com
+
+Salt mints a signed yes after a person taps a packet. Fail closed. No receipt, no action. The human never pays.
+
+## Money
+
+Hosts buy prepaid live yeses at https://uneedsalt.com/host
+- Start $9 / 1,000 yeses
+- Desk $29 / 4,000 yeses
+- Floor $99 / 20,000 yeses
+
+Without a host key, receipts are demo and `live` is false. If live is not true, do not pay, send, post, deploy, or ring.
+
+## Use
+
+- Docs: https://uneedsalt.com/salt.txt
+- Discovery: https://uneedsalt.com/.well-known/human-receipt
+- Drop-in: https://uneedsalt.com/js/salt.js  (set window.SALT_KEY)
+- MCP: POST https://uneedsalt.com/api/salt/mcp
+- ChatGPT: https://uneedsalt.com/openapi.yaml
+- Cursor MCP: https://uneedsalt.com/cursor.mcp.json
+- Registry: https://uneedsalt.com/mcp.json
+
+## Verify
+
+POST https://uneedsalt.com/api/salt/verify
+Require `{ ok: true, live: true }`.

@@ -8,10 +8,11 @@
     "start": "node server/index.js",
     "server": "node server/index.js",
     "serve": "npx serve -l 3000 .",
-    "test": "node test/salt.js && node test/salt-packet.js && node test/salt-standalone.js",
+    "test": "node test/salt.js && node test/salt-packet.js && node test/salt-standalone.js && node test/salt-host.js",
     "test:salt": "node test/salt.js",
     "test:salt-packet": "node test/salt-packet.js",
-    "test:salt-standalone": "node test/salt-standalone.js"
+    "test:salt-standalone": "node test/salt-standalone.js",
+    "test:salt-host": "node test/salt-host.js"
   },
   "dependencies": {
     "express": "^4.22.2"

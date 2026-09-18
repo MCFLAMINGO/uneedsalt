@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "uneedsalt": {
+      "type": "http",
+      "url": "https://uneedsalt.com/api/salt/mcp",
+      "headers": {
+        "Authorization": "Bearer sk_live_REPLACE"
+      }
+    }
+  }
+}

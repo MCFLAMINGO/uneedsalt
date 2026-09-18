@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://uneedsalt.com http://127.0.0.1:8787 http://localhost:8787; form-action 'self'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Salt — buy live yeses</title>
+<meta name="description" content="Prepaid host keys for Salt. The human never pays. Agents fail closed until a live receipt.">
+<link rel="canonical" href="https://uneedsalt.com/host">
+<link rel="stylesheet" href="/css/salt.css">
+</head>
+<body class="salt-body">
+<div class="salt-home salt-host">
+  <p class="salt-kicker"><a href="/">Salt</a></p>
+  <h1>Buy live yeses.</h1>
+  <p class="lede">The thumb is free. You are the host. Prepaid packs. Each Yes burns one. No receipt, no action. Demo knocks without a key are not live.</p>
+  <form id="buy" class="salt-buy">
+    <label class="salt-field">Email for the receipt
+      <input type="email" name="email" id="email" autocomplete="email" placeholder="you@desk.com">
+    </label>
+    <div class="salt-packs" id="packs"></div>
+  </form>
+  <p class="salt-note" id="note"></p>
+  <div id="paid" class="salt-paid" hidden>
+    <p class="salt-kicker">Your host key — copy once</p>
+    <pre class="salt-snip" id="keybox"></pre>
+    <p class="lede" id="left"></p>
+  </div>
+  <pre class="salt-snip">window.SALT_KEY = 'sk_live_…'
+const rec = await Salt.yes({ who: 'your-app', action: 'pay', to: 'vendor', amount: '12' })
+if (!rec || !rec.live) throw new Error('no')</pre>
+  <p class="lede">Cursor / Claude: MCP <span class="mono">POST https://uneedsalt.com/api/salt/mcp</span> with <span class="mono">Authorization: Bearer sk_…</span>. ChatGPT: <a href="/openapi.yaml">openapi.yaml</a>. Agents: <a href="/llms.txt">llms.txt</a> · <a href="/salt.txt">salt.txt</a>.</p>
+</div>
+<script src="/js/hostPage.js"></script>
+</body>
+</html>

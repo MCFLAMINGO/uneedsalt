@@ -12,6 +12,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { ensureDataDir } = require('./dataPath');
+const hosts = require('./hosts');
 
 const TTL_MS = Number(process.env.SALT_TTL_MS) || 90 * 1000;
 const FILE = () => path.join(ensureDataDir(), 'salt.json');
@@ -38,7 +39,7 @@ function writeCors(req, res) {
   res.setHeader('Access-Control-Allow-Origin', origin === 'null' ? '*' : origin);
   res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Salt-Key, X-Salt-Issue');
   res.setHeader('Access-Control-Max-Age', '86400');
   if (req.method === 'OPTIONS') {
     res.statusCode = 204;
@@ -131,8 +132,11 @@ function wellKnown() {
     css: base + '/css/salt.css',
     docs: base + '/salt.txt',
     mcp: 'POST ' + base + '/api/salt/mcp',
+    host: base + '/host',
+    packs: hosts.publicPacks(),
+    auth: 'Authorization: Bearer sk_live_…',
     ttl_ms: TTL_MS,
-    note: 'Salt is its own product. Drop js/salt.js on any origin. Fail closed. No receipt, no action.',
+    note: 'Salt is its own product. Drop js/salt.js on any origin. Fail closed. No receipt, no action. Demo receipts are not live — agents must send a host key. Human never pays. Host prepaid yeses at /host.',
   };
 }
 
@@ -152,6 +156,7 @@ function publicChallenge(c) {
     tap: tapUrl(c.id),
     createdAt: c.createdAt,
     expiresAt: c.expiresAt,
+    live: c.live === true,
     receipt: status === 'yes' ? c.receipt : null,
   };
 }
@@ -168,9 +173,10 @@ function signReceipt(payload) {
     ok: true,
     at: payload.at,
     exp: payload.exp,
+    live: payload.live === true,
   });
   const sig = crypto.createHmac('sha256', secret()).update(body).digest('base64url');
-  return Object.assign({ v: 1 }, payload, { ok: true, sig: sig });
+  return Object.assign({ v: 1 }, payload, { ok: true, live: payload.live === true, sig: sig });
 }
 
 function verifyReceipt(receipt) {
@@ -186,20 +192,21 @@ function verifyReceipt(receipt) {
     unit: receipt.unit || '',
     at: receipt.at,
     exp: receipt.exp,
+    live: receipt.live === true,
   });
   const a = Buffer.from(String(receipt.sig));
   const b = Buffer.from(String(expect.sig));
   if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
     return { ok: false, error: 'Receipt not signed by Salt.' };
   }
-  return { ok: true, receipt: expect };
+  return { ok: true, live: expect.live === true, receipt: expect };
 }
 
 function clean(s, max) {
   return String(s || '').replace(/\s+/g, ' ').trim().slice(0, max || 80);
 }
 
-function create(input, meta) {
+async function create(input, meta) {
   rateHit(meta && meta.ip);
   const who = clean(input && input.who, 64) || 'agent';
   const action = clean(input && (input.action || input.do), 32) || 'act';
@@ -207,6 +214,13 @@ function create(input, meta) {
   const amount = input && input.amount != null && input.amount !== '' ? clean(input.amount, 32) : '';
   const unit = clean(input && input.unit, 16);
   if (!to && !amount) throw err(400, 'Say what the agent wants (to / amount).');
+  const host = await hosts.resolve(meta);
+  if (host && !hosts.canCreate(host)) {
+    throw err(402, 'Host unpaid. Buy yeses at ' + hosts.publicBase() + '/host');
+  }
+  if (!host && process.env.SALT_REQUIRE_HOST === '1') {
+    throw err(401, 'Need a host key. ' + hosts.publicBase() + '/host');
+  }
   const db = load();
   prune(db);
   const id = nid();
@@ -222,6 +236,8 @@ function create(input, meta) {
     createdAt: createdAt,
     expiresAt: createdAt + TTL_MS,
     receipt: null,
+    hostId: host ? host.id : '',
+    live: !!(host && hosts.canCreate(host)),
   };
   db.challenges[id] = c;
   save(db);
@@ -240,7 +256,7 @@ function get(id) {
   return publicChallenge(c);
 }
 
-function decide(id, yes) {
+async function decide(id, yes) {
   const db = load();
   prune(db);
   const c = db.challenges[String(id || '')];
@@ -254,6 +270,7 @@ function decide(id, yes) {
   c.status = yes ? 'yes' : 'no';
   if (yes) {
     const at = now();
+    if (c.hostId && c.live) await hosts.burn(c.hostId);
     c.receipt = signReceipt({
       id: c.id,
       who: c.who,
@@ -263,6 +280,7 @@ function decide(id, yes) {
       unit: c.unit || '',
       at: at,
       exp: at + 10 * 60 * 1000,
+      live: c.live === true,
     });
   }
   save(db);
@@ -283,7 +301,7 @@ function mcpTools() {
   return [
     {
       name: 'salt_challenge',
-      description: 'Ask a human for a Salt yes before paying, sending, posting, or ringing. Returns a packet tap URL. Fail closed until salt_verify succeeds.',
+      description: 'Ask a human for a Salt yes before paying, sending, posting, or ringing. Send key (host key from uneedsalt.com/host) so the receipt is live. Demo receipts (no key) must not authorize a real action. Fail closed until salt_verify returns live true.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -292,6 +310,7 @@ function mcpTools() {
           to: { type: 'string' },
           amount: { type: 'string' },
           unit: { type: 'string' },
+          key: { type: 'string', description: 'Host key sk_live_… or sk_test_… from https://uneedsalt.com/host' },
         },
       },
     },
@@ -302,13 +321,13 @@ function mcpTools() {
     },
     {
       name: 'salt_verify',
-      description: 'Verify a Salt receipt. If ok is false, do not perform the action.',
+      description: 'Verify a Salt receipt. If ok is false OR live is not true, do not perform the action. Demo receipts are not live.',
       inputSchema: { type: 'object', properties: { receipt: { type: 'object' } }, required: ['receipt'] },
     },
   ];
 }
 
-function handleMcp(body, meta) {
+async function handleMcp(body, meta) {
   const id = body && body.id != null ? body.id : 1;
   const method = body && body.method;
   function ok(result) { return { status: 200, json: { jsonrpc: '2.0', id: id, result: result } }; }
@@ -317,7 +336,7 @@ function handleMcp(body, meta) {
     return ok({
       protocolVersion: '2024-11-05',
       capabilities: { tools: {} },
-      serverInfo: { name: 'salt', version: '1.0.0' },
+      serverInfo: { name: 'salt', version: '1.1.0' },
     });
   }
   if (method === 'tools/list' || method === 'tools/listChanged') {
@@ -330,7 +349,10 @@ function handleMcp(body, meta) {
       return ok({ content: [{ type: 'text', text: JSON.stringify(obj) }] });
     }
     try {
-      if (name === 'salt_challenge') return text(Object.assign({ human_required: 403 }, create(args, meta)));
+      if (name === 'salt_challenge') {
+        const ch = await create(args, Object.assign({}, meta, { key: args.key || args.host_key }));
+        return text(Object.assign({ human_required: 403 }, ch));
+      }
       if (name === 'salt_poll') return text(get(args.id));
       if (name === 'salt_verify') return text(verifyReceipt(args.receipt || args));
       return fail(-32601, 'Unknown tool');
@@ -352,15 +374,45 @@ function mountRoutes(app) {
     res.json(wellKnown());
   });
 
-  app.post('/api/salt/challenge', function (req, res) {
+  app.get('/api/salt/host/packs', function (_req, res) {
+    res.json({ ok: true, packs: hosts.publicPacks(), stripe: require('./stripe').stripeOn(), host: hosts.publicBase() + '/host' });
+  });
+
+  app.post('/api/salt/host/checkout', async function (req, res) {
     try {
-      const c = create(req.body || {}, { ip: req.ip || (req.headers && req.headers['x-forwarded-for']) });
+      const out = await hosts.checkout(req.body || {});
+      res.status(out.status).json(out.json);
+    } catch (e) { fail(res, e); }
+  });
+
+  app.get('/api/salt/host/session/:id', async function (req, res) {
+    try { res.json(await hosts.sessionReturn(req.params.id)); }
+    catch (e) { fail(res, e); }
+  });
+
+  app.get('/api/salt/host/me', async function (req, res) {
+    try { res.json(await hosts.me({ headers: req.headers, ip: req.ip })); }
+    catch (e) { fail(res, e); }
+  });
+
+  app.post('/api/salt/host/issue', function (req, res) {
+    try { res.status(201).json(hosts.adminIssue(req.body || {}, { headers: req.headers })); }
+    catch (e) { fail(res, e); }
+  });
+
+  app.post('/api/salt/challenge', async function (req, res) {
+    try {
+      const c = await create(req.body || {}, {
+        ip: req.ip || (req.headers && req.headers['x-forwarded-for']),
+        headers: req.headers,
+        key: req.body && (req.body.key || req.body.host_key),
+      });
       res.status(201).json(Object.assign({ human_required: 403 }, c));
     } catch (e) { fail(res, e); }
   });
 
-  app.post('/api/salt/mcp', function (req, res) {
-    const out = handleMcp(req.body || {}, { ip: req.ip });
+  app.post('/api/salt/mcp', async function (req, res) {
+    const out = await handleMcp(req.body || {}, { ip: req.ip, headers: req.headers });
     res.status(out.status).json(out.json);
   });
 
@@ -369,13 +421,13 @@ function mountRoutes(app) {
     catch (e) { fail(res, e); }
   });
 
-  app.post('/api/salt/challenge/:id/yes', function (req, res) {
-    try { res.json(decide(req.params.id, true)); }
+  app.post('/api/salt/challenge/:id/yes', async function (req, res) {
+    try { res.json(await decide(req.params.id, true)); }
     catch (e) { fail(res, e); }
   });
 
-  app.post('/api/salt/challenge/:id/no', function (req, res) {
-    try { res.json(decide(req.params.id, false)); }
+  app.post('/api/salt/challenge/:id/no', async function (req, res) {
+    try { res.json(await decide(req.params.id, false)); }
     catch (e) { fail(res, e); }
   });
 
@@ -387,20 +439,37 @@ function mountRoutes(app) {
 }
 
 /** Used by the Vercel handler (no Express). */
-function handleHttp(method, pathname, body, meta) {
+async function handleHttp(method, pathname, body, meta) {
   if (method === 'GET' && (pathname === '/.well-known/human-receipt' || pathname === '/api/salt' || pathname === '/api/salt/well-known')) {
     return { status: 200, json: wellKnown() };
+  }
+  if (method === 'GET' && pathname === '/api/salt/host/packs') {
+    return { status: 200, json: { ok: true, packs: hosts.publicPacks(), stripe: require('./stripe').stripeOn(), host: hosts.publicBase() + '/host' } };
+  }
+  if (method === 'POST' && pathname === '/api/salt/host/checkout') {
+    return hosts.checkout(body || {});
+  }
+  if (method === 'GET' && pathname.indexOf('/api/salt/host/session/') === 0) {
+    const sid = decodeURIComponent(pathname.slice('/api/salt/host/session/'.length));
+    return { status: 200, json: await hosts.sessionReturn(sid) };
+  }
+  if (method === 'GET' && pathname === '/api/salt/host/me') {
+    return { status: 200, json: await hosts.me(meta || {}) };
+  }
+  if (method === 'POST' && pathname === '/api/salt/host/issue') {
+    return { status: 201, json: hosts.adminIssue(body || {}, meta || {}) };
   }
   if (method === 'POST' && pathname === '/api/salt/mcp') {
     return handleMcp(body || {}, meta);
   }
   if (method === 'POST' && pathname === '/api/salt/challenge') {
-    return { status: 201, json: Object.assign({ human_required: 403 }, create(body || {}, meta)) };
+    const c = await create(body || {}, Object.assign({}, meta, { key: body && (body.key || body.host_key) }));
+    return { status: 201, json: Object.assign({ human_required: 403 }, c) };
   }
   const m = String(pathname || '').match(/^\/api\/salt\/challenge\/([^/]+)(?:\/(yes|no))?$/);
   if (m && method === 'GET' && !m[2]) return { status: 200, json: get(decodeURIComponent(m[1])) };
-  if (m && method === 'POST' && m[2] === 'yes') return { status: 200, json: decide(decodeURIComponent(m[1]), true) };
-  if (m && method === 'POST' && m[2] === 'no') return { status: 200, json: decide(decodeURIComponent(m[1]), false) };
+  if (m && method === 'POST' && m[2] === 'yes') return { status: 200, json: await decide(decodeURIComponent(m[1]), true) };
+  if (m && method === 'POST' && m[2] === 'no') return { status: 200, json: await decide(decodeURIComponent(m[1]), false) };
   if (method === 'POST' && pathname === '/api/salt/verify') {
     const out = verifyReceipt((body && body.receipt) || body);
     return { status: out.ok ? 200 : 403, json: out };
