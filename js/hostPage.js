@@ -1,9 +1,11 @@
 (function () {
   'use strict';
   function api() {
+    try { if (window.SALT_API) return String(window.SALT_API).replace(/\/$/, ''); } catch (e) { /* ignore */ }
     try {
       var h = location.hostname;
-      if (h === 'localhost' || h === '127.0.0.1') return 'http://127.0.0.1:8787';
+      var p = String(location.port || '');
+      if ((h === 'localhost' || h === '127.0.0.1') && (p === '3000' || p === '3010')) return 'http://127.0.0.1:8787';
     } catch (e) { /* ignore */ }
     return '';
   }

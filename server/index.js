@@ -29,7 +29,11 @@ app.use(function (req, res, next) {
 
 salt.mountRoutes(app);
 
-app.use(express.static(path.join(__dirname, '..')));
+const root = path.join(__dirname, '..');
+app.get(['/host', '/host.html'], function (_req, res) {
+  res.sendFile(path.join(root, 'host.html'));
+});
+app.use(express.static(root));
 
 app.listen(port, '0.0.0.0', function () {
   console.log('Salt on :' + port);

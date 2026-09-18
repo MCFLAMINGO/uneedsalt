@@ -13,7 +13,11 @@
     try { if (w.SALT_API) return String(w.SALT_API).replace(/\/$/, ''); } catch (e) { /* ignore */ }
     try {
       var h = w.location && w.location.hostname;
-      if (h === 'localhost' || h === '127.0.0.1') return 'http://127.0.0.1:8787';
+      if (h === 'localhost' || h === '127.0.0.1') {
+        var p = w.location && w.location.port;
+        if (p && p !== '3000' && p !== '3010') return String(w.location.origin).replace(/\/$/, '');
+        return 'http://127.0.0.1:8787';
+      }
     } catch (e) { /* ignore */ }
     return 'https://uneedsalt.com';
   }
