@@ -1,0 +1,55 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.uneedsalt.com" }],
+      "destination": "https://uneedsalt.com/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    { "source": "/salt", "destination": "/" },
+    { "source": "/.well-known/human-receipt", "destination": "/api/salt" }
+  ],
+  "functions": {
+    "api/index.js": { "memory": 512, "maxDuration": 15 },
+    "api/[...path].js": { "memory": 512, "maxDuration": 15 },
+    "api/salt/[...path].js": { "memory": 512, "maxDuration": 15 }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "no-referrer" },
+        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" }
+      ]
+    },
+    {
+      "source": "/js/salt.js",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Cross-Origin-Resource-Policy", "value": "cross-origin" },
+        { "key": "Cache-Control", "value": "public, max-age=300" }
+      ]
+    },
+    {
+      "source": "/css/salt.css",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Cross-Origin-Resource-Policy", "value": "cross-origin" },
+        { "key": "Cache-Control", "value": "public, max-age=300" }
+      ]
+    },
+    {
+      "source": "/salt.txt",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Content-Type", "value": "text/plain; charset=utf-8" },
+        { "key": "Cache-Control", "value": "public, max-age=300" }
+      ]
+    }
+  ]
+}

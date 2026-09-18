@@ -1,0 +1,29 @@
+{
+  "name": "uneedsalt",
+  "version": "1.0.0",
+  "description": "Salt — human receipts for agents. Drop-in script, fail closed.",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "node server/index.js",
+    "server": "node server/index.js",
+    "serve": "npx serve -l 3000 .",
+    "test": "node test/salt.js && node test/salt-packet.js && node test/salt-standalone.js",
+    "test:salt": "node test/salt.js",
+    "test:salt-packet": "node test/salt-packet.js",
+    "test:salt-standalone": "node test/salt-standalone.js"
+  },
+  "dependencies": {
+    "express": "^4.22.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MCFLAMINGO/uneedsalt"
+  },
+  "keywords": [
+    "salt",
+    "human-receipt",
+    "agents",
+    "uneedsalt"
+  ]
+}

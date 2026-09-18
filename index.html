@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://uneedsalt.com https://poolpilot.xyz http://127.0.0.1:8787 http://localhost:8787; form-action 'none'; base-uri 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Salt — human receipts for agents</title>
+<meta name="description" content="Salt is its own product. Drop one script on any site. An agent that wants to pay, send, or ring pops a packet. The human taps yes. No receipt, no action.">
+<link rel="canonical" href="https://uneedsalt.com">
+<link rel="stylesheet" href="/css/salt.css">
+</head>
+<body class="salt-body">
+<div id="salt-stage" class="salt-stage" hidden></div>
+<div id="home" class="salt-home">
+  <div class="salt-table">
+    <div class="salt-pkt salt-pkt--still" aria-hidden="true">
+      <div class="salt-sheet">
+        <div class="salt-crimp"></div>
+        <div class="salt-face"><span class="salt-word">Salt</span></div>
+      </div>
+    </div>
+  </div>
+  <p class="salt-kicker">Salt</p>
+  <h1>Human receipts for&nbsp;agents.</h1>
+  <p class="lede">Works like Link, for a yes. Any website. Any agent. Fail closed until they tap. No email code. Not a wallet.</p>
+  <pre class="salt-snip">&lt;script src="https://uneedsalt.com/js/salt.js"&gt;&lt;/script&gt;
+
+const rec = await Salt.yes({
+  who: 'your-app',
+  action: 'pay',
+  to: 'vendor',
+  amount: '12'
+})
+if (!rec) throw new Error('no')</pre>
+  <button type="button" class="salt-link" id="demo">Try one</button>
+  <p class="lede" style="margin-top:22px">Agents: <a href="/salt.txt">salt.txt</a> · <a href="/.well-known/human-receipt">/.well-known/human-receipt</a> · MCP <span class="mono">POST /api/salt/mcp</span></p>
+</div>
+<script src="/js/salt.js"></script>
+<script src="/js/saltPage.js"></script>
+</body>
+</html>

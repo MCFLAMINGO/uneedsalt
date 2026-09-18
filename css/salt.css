@@ -1,0 +1,169 @@
+/* Salt — works like Link. A sheet, not a rendered object. */
+:root {
+  --salt-ink: #111;
+  --salt-mute: #6b6b6b;
+  --salt-line: rgba(0, 0, 0, 0.08);
+  --salt-yes: #111;
+}
+html, body.salt-body {
+  margin: 0;
+  min-height: 100%;
+  background: #f4f4f2;
+  color: var(--salt-ink);
+  font: 500 15px/1.45 system-ui, -apple-system, sans-serif;
+}
+body.salt-body.salt-knock { background: #ecece8; }
+.salt-home { max-width: 420px; margin: 0 auto; padding: 48px 20px 96px; }
+.salt-table {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 36px;
+  min-height: 72px;
+}
+.salt-kicker {
+  margin: 0 0 8px;
+  font: 650 0.72rem/1 system-ui, sans-serif;
+  letter-spacing: 0.04em;
+  color: var(--salt-mute);
+}
+.salt-home h1 {
+  font: 560 1.6rem/1.2 system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.03em;
+  color: var(--salt-ink);
+  margin: 0 0 10px;
+}
+.salt-snip {
+  margin: 0 0 16px;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid var(--salt-line);
+  border-radius: 12px;
+  font: 450 0.72rem/1.5 ui-monospace, monospace;
+  color: #222;
+  overflow: auto;
+}
+.salt-home .lede { color: var(--salt-mute); margin: 0 0 16px; }
+.salt-home .mono { font: 500 0.78rem/1.45 ui-monospace, monospace; color: var(--salt-mute); word-break: break-word; }
+.salt-home a { color: var(--salt-ink); }
+.salt-link {
+  appearance: none;
+  border: 0;
+  background: var(--salt-yes);
+  color: #fff;
+  border-radius: 12px;
+  min-height: 44px;
+  padding: 0 16px;
+  font: 650 0.95rem system-ui, sans-serif;
+  cursor: pointer;
+}
+.salt-link:disabled { opacity: .5; }
+
+/* The control — same family as Link, not a 3D packet. */
+.salt-pkt {
+  position: relative;
+  width: max-content;
+  max-width: 280px;
+  background: none;
+  filter: none;
+  transform: none;
+  animation: salt-pop 200ms ease-out both;
+  user-select: none;
+}
+.salt-pkt.is-open { width: 260px; }
+.salt-pkt--still { animation: none; }
+@keyframes salt-pop {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.salt-sheet {
+  background: #fff;
+  border: 1px solid var(--salt-line);
+  border-radius: 16px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03), 0 10px 28px rgba(0, 0, 0, 0.08);
+  color: var(--salt-ink);
+  overflow: hidden;
+}
+.salt-crimp { display: none; }
+.salt-face {
+  display: block;
+  width: 100%;
+  padding: 12px 18px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+}
+.salt-word {
+  display: block;
+  font: 650 1.05rem/1 system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.03em;
+  color: var(--salt-ink);
+}
+.salt-pkt.is-open .salt-word {
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  color: var(--salt-mute);
+  padding-bottom: 8px;
+}
+.salt-rule { display: none; }
+.salt-hint { display: none; }
+.salt-in {
+  display: none;
+  padding: 0 16px 16px;
+  color: var(--salt-ink);
+  text-align: left;
+}
+.salt-pkt.is-open .salt-in { display: block; }
+.salt-who {
+  font-size: 0.72rem;
+  color: var(--salt-mute);
+}
+.salt-act { font-size: 1.15rem; font-weight: 650; margin: 2px 0 2px; letter-spacing: -0.02em; }
+.salt-to { font-size: 0.9rem; color: var(--salt-mute); word-break: break-word; }
+.salt-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 14px;
+}
+.salt-row button {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  font: 650 0.95rem system-ui, sans-serif;
+}
+.salt-row button:disabled { opacity: .45; cursor: default; }
+.salt-pkt.is-yes .salt-row,
+.salt-pkt.is-no .salt-row { display: none; }
+.salt-yes {
+  background: var(--salt-yes);
+  color: #fff;
+  border-radius: 12px;
+  min-height: 44px;
+}
+.salt-no {
+  background: transparent;
+  color: var(--salt-mute);
+  min-height: 36px;
+}
+.salt-done { margin: 12px 0 2px; font: 650 0.9rem system-ui, sans-serif; }
+.salt-done.ok { color: var(--salt-ink); }
+.salt-done.bad { color: #9b2c2c; }
+
+.salt-float {
+  position: fixed;
+  z-index: 2147483000;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+}
+.salt-float .salt-pkt { pointer-events: auto; }
+.salt-stage {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px 12px;
+}
+.salt-stage[hidden] { display: none; }
