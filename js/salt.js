@@ -111,11 +111,8 @@
     pkt.setAttribute('data-salt', c && c.id ? c.id : '');
     pkt.innerHTML =
       '<div class="salt-sheet">' +
-      '<i class="salt-end salt-end--l" aria-hidden="true"></i>' +
-      '<i class="salt-end salt-end--r" aria-hidden="true"></i>' +
-      '<div class="salt-grain" aria-hidden="true"></div>' +
       '<button type="button" class="salt-face" aria-expanded="false" aria-label="Salt — open">' +
-      '<span class="salt-word">Salt</span><span class="salt-rule" aria-hidden="true"></span></button>' +
+      '<img class="salt-photo" alt="Salt" src="' + assetBase() + '/img/salt-packet.jpg"></button>' +
       '<div class="salt-in">' +
       '<div class="salt-who"></div><div class="salt-act"></div><div class="salt-to"></div>' +
       '<div class="salt-row">' +
