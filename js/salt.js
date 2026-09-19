@@ -1,6 +1,9 @@
 /* Salt — host helper. Three lines:
- *   var rec = await Salt.yes({ who: 'cursor', action: 'pay', to: 'Railway', amount: '12' });
- *   if (!rec) throw new Error('no human yes');
+ *   <script src="https://uneedsalt.com/js/salt.js"></script>
+ *   <script>window.SALT_KEY = 'sk_live_…'</script>
+ *   const rec = await Salt.yes({ who: 'your-app', action: 'pay', to: 'vendor', amount: '12' })
+ *   if (!rec || !rec.live) throw new Error('no')
+ * Always uneedsalt.com. Demo (no key) is free and live: false.
  * Fail closed. The yes is a packet that pops — not a page, not a modal.
  */
 (function (w) {
@@ -183,6 +186,7 @@
   async function yes(spec, opts) {
     var o = opts || {};
     var ch = await challenge(spec);
+    if (!ch || !ch.id || ch.status !== 'pending') return null;
     if (typeof o.onChallenge === 'function') o.onChallenge(ch);
     if (o.openTap !== false && doc && doc.body) {
       pop(ch, o);

@@ -40,6 +40,8 @@ async function main() {
   ok('js always hits uneedsalt.com, not the embedder', /return 'https:\/\/uneedsalt\.com'/.test(js) && !/POOL_PILOT_API/.test(js));
   ok('assets never use the embedder origin', /127\.0\.0\.1:3000/.test(js) && !/return w\.location\.origin/.test(js));
   ok('js sends host key', /Authorization/.test(js) && /SALT_KEY/.test(js));
+  ok('yes fails closed unless the knock is pending', /if \(!ch \|\| !ch\.id \|\| ch\.status !== 'pending'\) return null/.test(js));
+  ok('embed checks the receipt is live', /!rec \|\| !rec\.live/.test(js));
   const docs = read('salt.txt');
   ok('docs are their own product', /its own product/.test(docs) && /uneedsalt\.com/.test(docs));
   ok('docs do not deep-link cooks into the desk', !/poolpilot\.xyz\/(seat|sit|slwurld|swap|arrive)/i.test(docs));
