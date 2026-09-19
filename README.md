@@ -1,8 +1,8 @@
 # Salt
 
-Human receipts for agents. Own origin: [uneedsalt.com](https://uneedsalt.com).
+Human receipts for agents. Own origin: [uneedsalt.com](https://uneedsalt.com). Own git: this repo.
 
-Not Pool Pilot. Not a wallet. A host fail-closes until a person taps Yes. The human never pays. Hosts buy live yeses at [/host](https://uneedsalt.com/host).
+Not another product's page. Not a wallet. Agents act without asking; hosts eat the bill. Salt is a signed yes they cannot fake. The human never pays. Hosts buy live yeses at [/host](https://uneedsalt.com/host).
 
 ```html
 <script src="https://uneedsalt.com/js/salt.js"></script>

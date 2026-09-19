@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://uneedsalt.com https://poolpilot.xyz http://127.0.0.1:8787 http://localhost:8787; form-action 'none'; base-uri 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://uneedsalt.com http://127.0.0.1:8787 http://localhost:8787; form-action 'none'; base-uri 'none'">
 <meta name="referrer" content="no-referrer">
 <title>Salt — human receipts for agents</title>
-<meta name="description" content="Salt is its own product. Drop one script on any site. An agent that wants to pay, send, or ring pops a packet. The human taps yes. No receipt, no action.">
+<meta name="description" content="Agents act without asking. Salt is a signed yes they cannot fake. Hosts buy live yeses. The human never pays. Origin uneedsalt.com.">
 <link rel="canonical" href="https://uneedsalt.com">
 <link rel="stylesheet" href="/css/salt.css">
 </head>
@@ -20,9 +20,10 @@
       </div>
     </div>
   </div>
-  <p class="salt-kicker">Salt</p>
+  <p class="salt-kicker">Salt · uneedsalt.com</p>
   <h1>Human receipts for&nbsp;agents.</h1>
-  <p class="lede">A salt packet pops on the phone. Tap yes. Any website. Any agent. Fail closed. The human never pays. Hosts buy live yeses.</p>
+  <p class="lede">Agents pay, send, post, and deploy without asking. A host that lets that run eats the bill. Salt is a signed yes they cannot fake. No live receipt, the action does not run.</p>
+  <p class="lede">The human never pays. You do — prepaid, like a meter. $9 is 1,000 live yeses. Demo without a key is free and not live.</p>
   <pre class="salt-snip">&lt;script src="https://uneedsalt.com/js/salt.js"&gt;&lt;/script&gt;
 &lt;script&gt;window.SALT_KEY = 'sk_live_…'&lt;/script&gt;
 
@@ -35,9 +36,9 @@ const rec = await Salt.yes({
 if (!rec || !rec.live) throw new Error('no')</pre>
   <p class="salt-row-home">
     <button type="button" class="salt-link" id="demo">Try one</button>
-    <a class="salt-link salt-link--ghost" href="/host">Get a key</a>
+    <a class="salt-link salt-link--ghost" href="/host">Buy live yeses</a>
   </p>
-  <p class="lede" style="margin-top:22px">Agents: <a href="/salt.txt">salt.txt</a> · <a href="/llms.txt">llms.txt</a> · <a href="/.well-known/human-receipt">/.well-known/human-receipt</a> · MCP <span class="mono">POST /api/salt/mcp</span></p>
+  <p class="lede" style="margin-top:22px">Own git, own origin. Agents: <a href="/salt.txt">salt.txt</a> · <a href="/llms.txt">llms.txt</a> · <a href="/.well-known/human-receipt">/.well-known/human-receipt</a> · MCP <span class="mono">POST /api/salt/mcp</span></p>
 </div>
 <script src="/js/salt.js"></script>
 <script src="/js/saltPage.js"></script>

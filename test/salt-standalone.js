@@ -45,7 +45,10 @@ async function main() {
   ok('docs do not deep-link cooks into the desk', !/poolpilot\.xyz\/(seat|sit|slwurld|swap|arrive)/i.test(docs));
   ok('docs sell the host not the thumb', /human never pays/i.test(docs) && /\/host/.test(docs) && /live/.test(docs));
   ok('landing is a product, not a desk', /Human receipts for/.test(read('index.html')) && /uneedsalt\.com\/js\/salt\.js/.test(read('index.html')) && !/slwurld/i.test(read('index.html')));
-  ok('landing sells keys', /Get a key/.test(read('index.html')) && /\/host/.test(read('index.html')));
+  ok('landing sells the till', /Buy live yeses/.test(read('index.html')) && /\/host/.test(read('index.html')));
+  ok('landing says why it exists', /eats the bill/.test(read('index.html')) && /cannot fake/.test(read('index.html')));
+  ok('landing does not phone another product', !/poolpilot/i.test(read('index.html')) && !/slwurld/i.test(read('index.html')));
+  ok('docs say why Salt exists', /Why Salt exists/.test(docs) && /eats that bill/.test(docs));
   ok('public base is uneedsalt.com', !process.env.SALT_PUBLIC_BASE && salt.publicBase() === 'https://uneedsalt.com');
   ok('vercel parks uneedsalt.com on Salt', /uneedsalt\.com/.test(read('vercel.json')));
   ok('llms.txt points agents at the till', /uneedsalt\.com\/host/.test(read('llms.txt')));

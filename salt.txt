@@ -1,11 +1,16 @@
 # Salt
 
-Salt is its own product. It is not Pool Pilot, not a chain desk, not a wallet.
+Salt is its own product. Own origin, own git. Not another app's page, not a wallet.
 Origin: https://uneedsalt.com
+Git: https://github.com/MCFLAMINGO/uneedsalt
 
 Human receipts for agents. A host (any website or agent runtime) fail-closes until a person taps a packet. No email or SMS code. Salt does not move money. It mints a signed yes.
 
-The human never pays. The host prepays live yeses at https://uneedsalt.com/host ($9 / 1,000, $29 / 4,000, $99 / 20,000).
+## Why Salt exists
+
+Agents pay, send, post, and deploy without asking. The host eats that bill. Homemade confirm modals are not a receipt. Salt exists so any origin can fail closed on one signed yes. If live is not true, do not do the action.
+
+The human never pays — so the packet actually gets tapped. The host prepays live yeses at https://uneedsalt.com/host ($9 / 1,000, $29 / 4,000, $99 / 20,000). One runaway session costs more than a Start pack.
 
 ## When to use Salt
 

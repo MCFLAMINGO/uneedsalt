@@ -1,8 +1,10 @@
 # Salt
 
-> Human receipts for agents. Origin https://uneedsalt.com
+> Human receipts for agents. Origin https://uneedsalt.com · git https://github.com/MCFLAMINGO/uneedsalt
 
 Salt mints a signed yes after a person taps a packet. Fail closed. No receipt, no action. The human never pays.
+
+Agents act without asking. Hosts eat the bill. Salt exists so you do not invent your own confirm. If live is not true, do not pay, send, post, deploy, or ring.
 
 ## Money
 

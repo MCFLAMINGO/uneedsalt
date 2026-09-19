@@ -136,7 +136,7 @@ function wellKnown() {
     packs: hosts.publicPacks(),
     auth: 'Authorization: Bearer sk_live_…',
     ttl_ms: TTL_MS,
-    note: 'Salt is its own product. Drop js/salt.js on any origin. Fail closed. No receipt, no action. Demo receipts are not live — agents must send a host key. Human never pays. Host prepaid yeses at /host.',
+    note: 'Salt is its own product on uneedsalt.com. Agents act without asking; hosts eat the bill. A live receipt is a signed yes they cannot fake. Fail closed. Demo receipts are not live. Human never pays. Host prepaid yeses at /host.',
   };
 }
 
