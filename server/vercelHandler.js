@@ -63,8 +63,22 @@ function ipOf(req) {
 
 function pathnameOf(req) {
   const raw = req.url || '/';
-  try { return new URL(raw, 'http://local').pathname; }
-  catch (e) { return String(raw).split('?')[0] || '/'; }
+  let pathname = '/';
+  let hinted = '';
+  try {
+    const u = new URL(raw, 'http://local');
+    pathname = u.pathname || '/';
+    hinted = u.searchParams.get('__salt') || '';
+  } catch (e) {
+    pathname = String(raw).split('?')[0] || '/';
+  }
+  // Vercel's api/[...path] only matches one segment. Nested /api/* is rewritten
+  // to /api?__salt=… and the original path is rebuilt here. A preserved req.url
+  // (already /api/salt/…) wins, so the hint cannot override a real route.
+  if ((pathname === '/api' || pathname === '/api/') && hinted) {
+    return '/api/' + String(hinted).replace(/^\/+/, '');
+  }
+  return pathname;
 }
 
 async function handler(req, res) {

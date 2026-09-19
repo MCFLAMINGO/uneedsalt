@@ -11,7 +11,8 @@
   ],
   "rewrites": [
     { "source": "/salt", "destination": "/" },
-    { "source": "/.well-known/human-receipt", "destination": "/api/salt" }
+    { "source": "/.well-known/human-receipt", "destination": "/api/salt" },
+    { "source": "/api/:path*", "destination": "/api?__salt=:path*" }
   ],
   "functions": {
     "api/index.js": { "memory": 512, "maxDuration": 15 },

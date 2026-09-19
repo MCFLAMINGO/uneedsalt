@@ -79,6 +79,33 @@ async function main() {
   const httpPacks = await salt.handleHttp('GET', '/api/salt/host/packs', null, {});
   ok('http packs', httpPacks.status === 200 && httpPacks.json.ok);
 
+  const vercel = JSON.parse(require('fs').readFileSync(require('path').join(__dirname, '..', 'vercel.json'), 'utf8'));
+  const nested = (vercel.rewrites || []).some(function (r) {
+    return r.source === '/api/:path*' && r.destination === '/api?__salt=:path*';
+  });
+  ok('vercel rewrites nested /api onto the function', nested);
+
+  const handler = require('../server/vercelHandler');
+  function hit(url) {
+    return new Promise(function (resolve, reject) {
+      const res = {
+        statusCode: 0,
+        setHeader: function () {},
+        end: function (body) {
+          try { resolve({ status: this.statusCode, json: JSON.parse(body) }); }
+          catch (e) { reject(e); }
+        },
+      };
+      Promise.resolve(handler({ method: 'GET', url: url, headers: {} }, res)).catch(reject);
+    });
+  }
+  const direct = await hit('/api/salt/host/packs');
+  ok('handler packs on the real path', direct.status === 200 && direct.json.ok && direct.json.packs.length === 3);
+  const rewritten = await hit('/api?__salt=salt/host/packs');
+  ok('handler packs after the vercel rewrite', rewritten.status === 200 && rewritten.json.packs.length === 3);
+  const poll = await hit('/api?__salt=salt/challenge/abc');
+  ok('handler keeps challenge ids', poll.status === 404 && poll.json && poll.json.ok === false);
+
   const stripe = require('../server/stripe');
   process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test';
   const raw = JSON.stringify({ type: 'ping' });
