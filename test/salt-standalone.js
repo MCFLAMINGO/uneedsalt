@@ -27,6 +27,10 @@ async function main() {
 
   const listed = await salt.handleMcp({ jsonrpc: '2.0', id: 1, method: 'tools/list' });
   ok('mcp lists challenge', listed.json.result.tools.some(function (t) { return t.name === 'salt_challenge'; }));
+  const prompts = await salt.handleMcp({ jsonrpc: '2.0', id: 11, method: 'prompts/list' });
+  ok('mcp lists prompts', prompts.json.result.prompts.some(function (p) { return p.name === 'salt_yes'; }));
+  const resources = await salt.handleMcp({ jsonrpc: '2.0', id: 12, method: 'resources/list' });
+  ok('mcp lists resources', resources.json.result.resources.length === 1);
 
   const ch = await salt.handleMcp({
     jsonrpc: '2.0', id: 2, method: 'tools/call',

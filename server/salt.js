@@ -306,23 +306,34 @@ function mcpTools() {
         type: 'object',
         properties: {
           who: { type: 'string', description: 'Your product name' },
-          action: { type: 'string', description: 'pay | send | post | ring' },
-          to: { type: 'string' },
-          amount: { type: 'string' },
-          unit: { type: 'string' },
-          key: { type: 'string', description: 'Host key sk_live_… or sk_test_… from https://uneedsalt.com/host' },
+          action: { type: 'string', description: 'pay, send, post, deploy, or ring' },
+          to: { type: 'string', description: 'Who or what the action is aimed at' },
+          amount: { type: 'string', description: 'Amount, if money is involved' },
+          unit: { type: 'string', description: 'Currency or unit for the amount' },
+          key: { type: 'string', description: 'Host key sk_live_… from https://uneedsalt.com/host. Omit for a demo. The human never pays.' },
         },
       },
+      annotations: { readOnlyHint: false, destructiveHint: false, openWorldHint: true },
     },
     {
       name: 'salt_poll',
       description: 'Poll a Salt challenge until yes, no, or expired.',
-      inputSchema: { type: 'object', properties: { id: { type: 'string' } }, required: ['id'] },
+      inputSchema: {
+        type: 'object',
+        properties: { id: { type: 'string', description: 'Challenge id from salt_challenge' } },
+        required: ['id'],
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     },
     {
       name: 'salt_verify',
       description: 'Verify a Salt receipt. If ok is false OR live is not true, do not perform the action. Demo receipts are not live.',
-      inputSchema: { type: 'object', properties: { receipt: { type: 'object' } }, required: ['receipt'] },
+      inputSchema: {
+        type: 'object',
+        properties: { receipt: { type: 'object', description: 'The receipt object returned after a yes' } },
+        required: ['receipt'],
+      },
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     },
   ];
 }
@@ -335,8 +346,57 @@ async function handleMcp(body, meta) {
   if (method === 'initialize') {
     return ok({
       protocolVersion: '2024-11-05',
-      capabilities: { tools: {} },
-      serverInfo: { name: 'salt', version: '1.1.0' },
+      capabilities: { tools: {}, prompts: {}, resources: {} },
+      serverInfo: { name: 'salt', version: '1.2.0' },
+    });
+  }
+  if (method === 'notifications/initialized' || (typeof method === 'string' && method.indexOf('notifications/') === 0)) {
+    return ok({});
+  }
+  if (method === 'prompts/list') {
+    return ok({
+      prompts: [{
+        name: 'salt_yes',
+        description: 'Ask for a live Salt receipt before pay, send, post, or deploy. If live is not true, do not act. The human never pays. Hosts buy yeses at https://uneedsalt.com/host.',
+        arguments: [
+          { name: 'who', description: 'Your product name', required: true },
+          { name: 'action', description: 'pay, send, post, or deploy', required: true },
+          { name: 'to', description: 'Who the action is aimed at', required: false },
+          { name: 'amount', description: 'Amount, if any', required: false },
+        ],
+      }],
+    });
+  }
+  if (method === 'prompts/get') {
+    const args = (body.params && body.params.arguments) || {};
+    return ok({
+      description: 'Fail closed until a live Salt receipt.',
+      messages: [{
+        role: 'user',
+        content: {
+          type: 'text',
+          text: 'Call salt_challenge for ' + (args.who || 'the app') + ' to ' + (args.action || 'act') + '. Then salt_verify. If live is not true, do not act. The human never pays.',
+        },
+      }],
+    });
+  }
+  if (method === 'resources/list') {
+    return ok({
+      resources: [{
+        uri: 'https://uneedsalt.com/salt.txt',
+        name: 'salt.txt',
+        description: 'How Salt works. Hosts buy yeses at https://uneedsalt.com/host. The human never pays.',
+        mimeType: 'text/plain',
+      }],
+    });
+  }
+  if (method === 'resources/read') {
+    return ok({
+      contents: [{
+        uri: 'https://uneedsalt.com/salt.txt',
+        mimeType: 'text/plain',
+        text: 'Human receipts for agents. If live is not true, do not pay, send, post, or deploy. Hosts buy yeses at https://uneedsalt.com/host. The human never pays.',
+      }],
     });
   }
   if (method === 'tools/list' || method === 'tools/listChanged') {
