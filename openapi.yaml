@@ -58,6 +58,28 @@ paths:
           description: Live receipt
         "403":
           description: Not a Salt receipt
+  /api/salt/live:
+    post:
+      operationId: saltLive
+      summary: Agent pays 0.50 USD (MPP) for one live knock. First response is HTTP 402. The human never pays.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                who: { type: string }
+                action: { type: string }
+                to: { type: string }
+                amount: { type: string }
+      responses:
+        "402":
+          description: Machine payment challenge
+        "201":
+          description: Live pending challenge
+        "503":
+          description: Stripe profile is not configured
 components:
   securitySchemes:
     hostKey:

@@ -10,7 +10,7 @@ Human receipts for agents. A host (any website or agent runtime) fail-closes unt
 
 Agents pay, send, post, and deploy without asking. The host eats that bill. Homemade confirm modals are not a receipt. Salt exists so any origin can fail closed on one signed yes. If live is not true, do not do the action.
 
-The human never pays — so the packet actually gets tapped. The host prepays live yeses at https://uneedsalt.com/host ($9 / 1,000, $29 / 4,000, $99 / 20,000). One runaway session costs more than a Start pack.
+The human never pays — so the packet actually gets tapped. The host prepays live yeses at https://uneedsalt.com/host ($9 / 1,000, $29 / 4,000, $99 / 20,000). One runaway session costs more than a Start pack. An agent can also pay 0.50 USD for one live knock at POST /api/salt/live (MPP, HTTP 402). That is the card minimum. The thumb still does not pay.
 
 ## When to use Salt
 
@@ -40,6 +40,7 @@ Poll:      GET  /api/salt/challenge/{id}
 Verify:    POST /api/salt/verify      { receipt }   — require live true
 Host:      GET  /host                 prepaid packs
            POST /api/salt/host/checkout { pack, email }
+Machine:   POST /api/salt/live        same body as challenge. HTTP 402 until the agent pays 0.50 USD (MPP). Then a live knock. Human never pays.
 CORS:      any origin
 
 ## MCP (Cursor, Claude, any MCP client)
@@ -60,7 +61,9 @@ https://uneedsalt.com/mcp.json
 
 ## Money
 
-The human does not pay. The host that called Salt.yes is prepaid per live yes. Demo (no key) is free and not live.
+The human does not pay. Two ways to get a live receipt:
+1. Host prepaid packs at https://uneedsalt.com/host
+2. Agent pay-per-knock at POST /api/salt/live — 0.50 USD via MPP (HTTP 402). Demo (no key, no payment) is free and not live.
 
 ## Do not
 

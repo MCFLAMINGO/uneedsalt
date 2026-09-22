@@ -39,7 +39,8 @@ function writeCors(req, res) {
   res.setHeader('Access-Control-Allow-Origin', origin === 'null' ? '*' : origin);
   res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Salt-Key, X-Salt-Issue');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Payment-Authorization, X-Salt-Key, X-Salt-Issue');
+  res.setHeader('Access-Control-Expose-Headers', 'WWW-Authenticate');
   res.setHeader('Access-Control-Max-Age', '86400');
   if (req.method === 'OPTIONS') {
     res.statusCode = 204;
@@ -134,9 +135,11 @@ function wellKnown() {
     mcp: 'POST ' + base + '/api/salt/mcp',
     host: base + '/host',
     packs: hosts.publicPacks(),
+    machine: 'POST ' + base + '/api/salt/live',
+    machine_usd: '0.50',
     auth: 'Authorization: Bearer sk_live_…',
     ttl_ms: TTL_MS,
-    note: 'Salt is its own product on uneedsalt.com. Agents act without asking; hosts eat the bill. A live receipt is a signed yes they cannot fake. Fail closed. Demo receipts are not live. Human never pays. Host prepaid yeses at /host.',
+    note: 'Salt is its own product on uneedsalt.com. Agents act without asking; hosts eat the bill. A live receipt is a signed yes they cannot fake. Fail closed. Demo receipts are not live. Human never pays. Host prepaid yeses at /host. Agents pay 0.50 USD per live knock at POST /api/salt/live (MPP).',
   };
 }
 
@@ -214,11 +217,12 @@ async function create(input, meta) {
   const amount = input && input.amount != null && input.amount !== '' ? clean(input.amount, 32) : '';
   const unit = clean(input && input.unit, 16);
   if (!to && !amount) throw err(400, 'Say what the agent wants (to / amount).');
-  const host = await hosts.resolve(meta);
+  const machinePaid = !!(meta && meta.machinePaid);
+  const host = machinePaid ? null : await hosts.resolve(meta);
   if (host && !hosts.canCreate(host)) {
     throw err(402, 'Host unpaid. Buy yeses at ' + hosts.publicBase() + '/host');
   }
-  if (!host && process.env.SALT_REQUIRE_HOST === '1') {
+  if (!host && !machinePaid && process.env.SALT_REQUIRE_HOST === '1') {
     throw err(401, 'Need a host key. ' + hosts.publicBase() + '/host');
   }
   const db = load();
@@ -237,7 +241,7 @@ async function create(input, meta) {
     expiresAt: createdAt + TTL_MS,
     receipt: null,
     hostId: host ? host.id : '',
-    live: !!(host && hosts.canCreate(host)),
+    live: machinePaid || !!(host && hosts.canCreate(host)),
   };
   db.challenges[id] = c;
   save(db);
@@ -301,7 +305,7 @@ function mcpTools() {
   return [
     {
       name: 'salt_challenge',
-      description: 'Ask a human for a Salt yes before paying, sending, posting, or ringing. Send key (host key from uneedsalt.com/host) so the receipt is live. Demo receipts (no key) must not authorize a real action. Fail closed until salt_verify returns live true.',
+      description: 'Ask a human for a Salt yes before paying, sending, posting, or ringing. Send key (host key from uneedsalt.com/host) so the receipt is live. Without a key this is a demo and live is false. To pay for one live knock without a host key, POST https://uneedsalt.com/api/salt/live and satisfy the HTTP 402 (0.50 USD, MPP). The human never pays. Fail closed until salt_verify returns live true.',
       inputSchema: {
         type: 'object',
         properties: {
@@ -458,6 +462,14 @@ function mountRoutes(app) {
   app.post('/api/salt/host/issue', function (req, res) {
     try { res.status(201).json(hosts.adminIssue(req.body || {}, { headers: req.headers })); }
     catch (e) { fail(res, e); }
+  });
+
+  app.post('/api/salt/live', function (req, res) {
+    const machine = require('./machine');
+    machine.handle(req, res).catch(function (e) {
+      if (res.headersSent) return;
+      fail(res, e);
+    });
   });
 
   app.post('/api/salt/challenge', async function (req, res) {

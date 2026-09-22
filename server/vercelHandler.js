@@ -96,6 +96,14 @@ async function handler(req, res) {
       return send(res, e.status || 400, { ok: false, error: String(e && e.message) || 'webhook error' });
     }
   }
+  if (pathname === '/api/salt/live' && req.method === 'POST') {
+    const machine = require('./machine');
+    try { await machine.handle(req, res); }
+    catch (e) {
+      if (!res.headersSent) return send(res, e.status || 500, { ok: false, error: String(e && e.message) || 'salt error' });
+    }
+    return;
+  }
   if (pathname === '/.well-known/human-receipt' || pathname === '/api/salt' || pathname.indexOf('/api/salt/') === 0) {
     try {
       const body = req.method === 'GET' ? null : await readBody(req);

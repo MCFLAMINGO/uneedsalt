@@ -15,6 +15,10 @@ Hosts buy prepaid live yeses at https://uneedsalt.com/host
 
 Without a host key, receipts are demo and `live` is false. If live is not true, do not pay, send, post, deploy, or ring.
 
+## Agent pay
+
+Agents buy one live knock without a host key. POST https://uneedsalt.com/api/salt/live with the same body as a challenge. First response is HTTP 402 (Machine Payments Protocol, 0.50 USD — card minimum). Retry with the payment credential. Then a human still taps the packet. The human never pays. Host packs at /host are cheaper if you prepay many yeses.
+
 ## Use
 
 - Docs: https://uneedsalt.com/salt.txt
