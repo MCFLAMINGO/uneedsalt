@@ -24,14 +24,16 @@ if (!rec || !rec.live) throw new Error('no')
 | ChatGPT | [openapi.yaml](https://uneedsalt.com/openapi.yaml) |
 | Agent index | [llms.txt](https://uneedsalt.com/llms.txt) · [salt.txt](https://uneedsalt.com/salt.txt) |
 | Registries | [mcp.json](https://uneedsalt.com/mcp.json) |
-| Buy | [uneedsalt.com/host](https://uneedsalt.com/host) |
+| Host buy | [uneedsalt.com/host](https://uneedsalt.com/host) |
+| Agent buy | `POST /api/salt/live` — 0.50 USD per live knock (MPP) |
 
-Packs: **$9 / 1,000** · **$29 / 4,000** · **$99 / 20,000**. Demo (no key) is free and not live.
+Packs: **$9 / 1,000** · **$29 / 4,000** · **$99 / 20,000**. Demo (no key) is free and not live. Agents can also pay **$0.50** per live knock at `/api/salt/live`.
 
 ## Vercel env (take cards)
 
 - `STRIPE_SECRET_KEY`
 - `STRIPE_WEBHOOK_SECRET` — endpoint `https://uneedsalt.com/api/salt/host/webhook` (`checkout.session.completed`)
+- `STRIPE_PROFILE_ID` — Stripe Business Profile id (`profile_…`) so agents can pay at `/api/salt/live`
 - `SALT_SECRET` — HMAC for receipts (≥16 chars)
 - `SALT_ISSUE_SECRET` — optional. `POST /api/salt/host/issue` with `X-Salt-Issue` mints a key by hand.
 
