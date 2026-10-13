@@ -21,6 +21,7 @@ ok('hidden stage does not eat the fold', /\.salt-stage\[hidden\]\s*\{\s*display:
 ok('click face to open', /aria-label="Salt — open"/.test(js) && /salt-face/.test(js));
 ok('yes() pops the packet', /pop\(ch/.test(js));
 ok('host page is a till not a desk', /Buy live yeses/.test(read('host.html')) && /human never pays/i.test(read('host.html')));
+ok('host page says how to spend a yes', /taps Yes/.test(read('host.html')) && /Salt does not take that money/.test(read('host.html')) && /id="sample"/.test(read('host.html')));
 ok('photo is served cross-origin', /img\/salt-packet\.jpg/.test(read('vercel.json')) && /Cross-Origin-Resource-Policy/.test(read('vercel.json')));
 
 console.log('salt-packet: all ok');

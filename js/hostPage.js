@@ -81,9 +81,45 @@
         return;
       }
       if (paid) paid.hidden = false;
-      if (keybox) keybox.textContent = out.key || '(key already shown — check your records)';
-      if (left) left.textContent = (out.left || 0) + ' live yeses on this key.';
-      say('Paid. That key is live. Put it in SALT_KEY. Human never sees it.');
+      var pitch = document.getElementById('pitch');
+      if (pitch) pitch.hidden = true;
+      var n = Number(out.left || 0);
+      if (keybox) keybox.textContent = out.key || 'This key was already shown once. It still holds these yeses. Put that same key in the snippet below.';
+      if (left) {
+        left.textContent = n.toLocaleString() + ' live yeses left. You paid for them. Each time a person taps Yes, one is spent. They are not charged.';
+      }
+      var sample = document.getElementById('sample');
+      if (sample && out.key) sample.textContent = sample.textContent.split('sk_live_…').join(out.key);
+      var paste = document.getElementById('paste');
+      if (paste) paste.textContent = out.key ? 'Paste this on your app. Your key is already in it.' : 'Paste this on your app. Put the key you copied into SALT_KEY.';
+      var title = document.getElementById('title');
+      if (title) title.textContent = 'You have ' + n.toLocaleString() + ' yeses.';
+      var show = document.getElementById('showpkt');
+      var trynote = document.getElementById('trynote');
+      if (show && out.key && window.Salt) {
+        show.hidden = false;
+        if (trynote) trynote.textContent = 'Opens the packet a person would see. Tapping Yes spends one yes from this pack.';
+        show.onclick = function () {
+          show.disabled = true;
+          window.SALT_KEY = out.key;
+          Salt.yes({
+            who: 'your-app',
+            action: 'pay',
+            to: 'vendor',
+            amount: '12',
+            unit: 'USD',
+            key: out.key
+          }).then(function (rec) {
+            show.disabled = false;
+            if (rec && rec.live && left) {
+              n = Math.max(0, n - 1);
+              left.textContent = n.toLocaleString() + ' live yeses left. That tap spent one. The person was not charged. The $12 was not charged.';
+            }
+          }).catch(function () { show.disabled = false; });
+        };
+      }
+      if (paid && paid.scrollIntoView) paid.scrollIntoView();
+      say('');
     }).catch(function () { say('Could not load this session.'); });
   }
 })();
