@@ -23,9 +23,33 @@
 <body class="salt-body">
 <div class="salt-home salt-host">
   <p class="salt-kicker"><a href="/">Salt</a> · uneedsalt.com</p>
-  <h1>Buy live yeses.</h1>
-  <p class="lede">One runaway agent session costs more than a Start pack. You buy the meter so pay / send / post / deploy cannot run without a live receipt. The thumb is free. Demo knocks without a key are not live.</p>
-  <p class="lede">$9 / 1,000 · $29 / 4,000 · $99 / 20,000. Card on this page. Key goes in SALT_KEY. Human never sees it. Human never pays.</p>
+  <h1 id="title">Buy live yeses.</h1>
+  <div id="paid" class="salt-paid" hidden>
+    <p class="salt-kicker">Your key. Copy it now. This page shows it once.</p>
+    <pre class="salt-snip" id="keybox"></pre>
+    <p class="lede" id="left"></p>
+    <h2>What you do with them</h2>
+    <ol class="salt-steps">
+      <li>Put this key on the app that can pay, send, post, or deploy. The person who taps never sees the key.</li>
+      <li>When that app wants to act, it asks Salt. A packet pops on their screen.</li>
+      <li>They tap Yes. That spends one yes from this pack. They are not charged.</li>
+      <li>Your app reads the receipt. If it is not live, the app stops. It does not pay, send, post, or deploy.</li>
+    </ol>
+    <p class="lede">Example. The packet says pay a vendor $12. The person taps Yes. Salt does not take that money. The $12, if it is paid, is a later charge from their card to the vendor. Salt only spent one yes you already bought.</p>
+    <p class="salt-row-home">
+      <button type="button" class="salt-link" id="showpkt" hidden>Show me the packet</button>
+    </p>
+    <p class="salt-note" id="trynote"></p>
+  </div>
+  <div id="pitch">
+  <p class="lede">You run an app that can pay, send, post, or deploy on its own. Salt stops it until a person taps Yes. You pay for those taps here. The human never pays.</p>
+  <p class="lede">One yes is one tap. Start is $9 for 1,000. Each Yes spends one from your key. A number in the call, such as paying a vendor $12, is the action they are approving. Salt does not take that money.</p>
+  <ol class="salt-steps">
+    <li>Buy a pack. Salt gives you a host key.</li>
+    <li>Put the key on the app. The person never sees it.</li>
+    <li>Before the agent acts, the app calls Salt. A packet pops. The person taps Yes.</li>
+    <li>Your app checks the receipt. If it is not live, do not do the action.</li>
+  </ol>
   <form id="buy" class="salt-buy">
     <label class="salt-field">Email for the receipt
       <input type="email" name="email" id="email" autocomplete="email" placeholder="you@host.com">
@@ -33,16 +57,17 @@
     <div class="salt-packs" id="packs"></div>
   </form>
   <p class="salt-note" id="note"></p>
-  <div id="paid" class="salt-paid" hidden>
-    <p class="salt-kicker">Your host key — copy once</p>
-    <pre class="salt-snip" id="keybox"></pre>
-    <p class="lede" id="left"></p>
   </div>
-  <pre class="salt-snip">window.SALT_KEY = 'sk_live_…'
+  <p class="salt-kicker" id="paste">Paste this on your app. After checkout, your key replaces the placeholder.</p>
+  <pre class="salt-snip" id="sample">&lt;script src="https://uneedsalt.com/js/salt.js"&gt;&lt;/script&gt;
+&lt;script&gt;window.SALT_KEY = 'sk_live_…'&lt;/script&gt;
+
 const rec = await Salt.yes({ who: 'your-app', action: 'pay', to: 'vendor', amount: '12' })
 if (!rec || !rec.live) throw new Error('no')</pre>
-  <p class="lede">Cursor / Claude: MCP <span class="mono">POST https://uneedsalt.com/api/salt/mcp</span> with <span class="mono">Authorization: Bearer sk_…</span>. ChatGPT: <a href="/openapi.yaml">openapi.yaml</a>. Agents: <a href="/llms.txt">llms.txt</a> · <a href="/salt.txt">salt.txt</a>.</p>
+  <p class="lede">The person sees the packet and taps Yes. You already paid for that tap. Agents that have no key can buy one tap for $0.50 at <span class="mono">POST /api/salt/live</span>. A pack is the cheaper way when you expect more than a few.</p>
+  <p class="lede">Same key from Cursor, Claude, or ChatGPT: <span class="mono">Authorization: Bearer sk_…</span> on <span class="mono">POST /api/salt/mcp</span>. Docs: <a href="/salt.txt">salt.txt</a> · <a href="/llms.txt">llms.txt</a> · <a href="/openapi.yaml">openapi.yaml</a>.</p>
 </div>
+<script src="/js/salt.js"></script>
 <script src="/js/hostPage.js"></script>
 </body>
 </html>

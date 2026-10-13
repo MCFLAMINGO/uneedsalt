@@ -220,3 +220,14 @@ body.salt-knock {
 .salt-pack span { display: block; margin-top: 2px; color: var(--salt-mute); font-size: 0.85rem; }
 .salt-note { color: var(--salt-mute); font-size: 0.85rem; min-height: 1.3em; }
 .salt-paid { margin: 8px 0 18px; }
+.salt-paid h2 {
+  font: 560 1.15rem/1.3 system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  margin: 18px 0 8px;
+}
+.salt-steps {
+  margin: 0 0 18px;
+  padding-left: 1.15em;
+  color: var(--salt-ink);
+}
+.salt-steps li { margin: 0 0 8px; }
